@@ -1,0 +1,43 @@
+name: Sync from Gitee Skills
+
+on:
+   workflow_dispatch: # 允许在 Actions 页面手动点击运行
+
+permissions:
+  contents: write # 允许工作流把合并结果推回 GitHub 仓库
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 拉取完整历史，避免合并时历史不完整
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add Gitee remote and fetch
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: |
+          # ⚠️ 替换下面两个占位符：
+          # 你的Gitee用户名 = Gitee 个人空间地址 gitee.com/ 后面的部分
+          # 你的Gitee仓库名 = Gitee 上的仓库名称
+          git remote add gitee https://oauth2:${GITEE_TOKEN}@gitee.com/peng-xiaoqin-git/my-set-of-skills.git
+          git fetch gitee --prune
+
+      - name: Merge Gitee changes
+        run: |
+          # ⚠️ 如果 Gitee 默认分支是 master，请把 gitee/main 改成 gitee/master
+          git merge gitee/master --allow-unrelated-histories --no-edit || {
+            echo "Merge conflict detected. Please resolve manually."
+            exit 1
+          }
+
+      - name: Push to GitHub
+        run: git push origin HEAD
