@@ -1,0 +1,3 @@
+interface:
+  display_name: "vibe大赏视频"
+  short_description: "输入主题，用 Hypit 自动生成 Vibe知识大赏短片"

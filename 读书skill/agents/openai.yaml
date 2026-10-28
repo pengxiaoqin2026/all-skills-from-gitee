@@ -1,0 +1,4 @@
+interface:
+  display_name: "读书skill"
+  short_description: "书名+风格一键做读书短视频"
+  default_prompt: "使用 $read-book-video，为《书名》制作一条油画感读书短视频。"
